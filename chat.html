@@ -2,193 +2,190 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TeenMind Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TeenMind - Chat</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to bottom right, #e8f5e9, #ffffff);
+      color: #2e7d32;
       display: flex;
       flex-direction: column;
       height: 100vh;
     }
 
-    header {
-      background-color: #c8e6c9;
-      padding: 1rem;
+    .header {
+      padding: 20px;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: bold;
-      color: #2e7d32;
     }
 
     .chat-container {
       flex: 1;
       display: flex;
-      padding: 1rem;
+      flex-direction: row;
+      overflow: hidden;
     }
 
     .bot-avatar {
-      flex: 0 0 120px;
+      width: 220px;
+      background: #ffffffbb;
       display: flex;
-      align-items: flex-start;
       justify-content: center;
-    }
-
-    .bot-avatar img {
-      width: 100px;
+      align-items: center;
       animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
+    .bot-avatar img {
+      width: 120px;
+      height: auto;
     }
 
     .chat-box {
       flex: 1;
       display: flex;
       flex-direction: column;
-    }
-
-    .messages {
-      flex: 1;
+      padding: 20px;
       overflow-y: auto;
-      padding: 1rem;
     }
 
     .message {
       margin: 10px 0;
+      padding: 12px 18px;
+      border-radius: 18px;
       max-width: 70%;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      line-height: 1.4;
     }
 
     .bot {
-      background-color: #ffffff;
+      background: #d0f0c0;
       align-self: flex-start;
-      border: 1px solid #a5d6a7;
     }
 
     .user {
-      background-color: #c8e6c9;
+      background: #b2dfdb;
       align-self: flex-end;
-      border: 1px solid #81c784;
     }
 
-    .input-area {
+    .input-container {
       display: flex;
-      padding: 1rem;
-      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #e8f5e9;
     }
 
     input {
       flex: 1;
-      padding: 0.8rem;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
       font-size: 1rem;
-      border: 1px solid #a5d6a7;
-      border-radius: 8px;
-      outline: none;
+      margin-right: 10px;
     }
 
     button {
-      margin-left: 10px;
-      padding: 0.8rem 1rem;
-      background-color: #4caf50;
-      color: white;
+      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
+      border-radius: 20px;
+      background-color: #66bb6a;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #388e3c;
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .notification {
-      background: #e8f5e9;
-      padding: 1rem;
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px;
+      font-size: 0.95rem;
       text-align: center;
-      font-style: italic;
-      color: #2e7d32;
     }
   </style>
 </head>
 <body>
-  <header>TeenMind Chat</header>
-  <div class="notification">
-    Hey, how was your day? You can tell me anything. I'm here to listen 💚
-  </div>
+  <div class="header">TeenMind 💚</div>
+
   <div class="chat-container">
     <div class="bot-avatar">
-      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="AI Bot" />
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="AI Bot" />
     </div>
-    <div class="chat-box">
-      <div class="messages" id="chatBox"></div>
-      <div class="input-area">
-        <input type="text" id="userInput" placeholder="Type something..." />
-        <button onclick="sendMessage()">Send</button>
-        <button onclick="startVoice()">🎤</button>
+
+    <div class="chat-box" id="chat-box">
+      <div class="notification">
+        Hey, I’m your AI friend. I’m here if you ever feel like talking 💬 <br>
+        No pressure. Just tell me about your day… or anything at all.
       </div>
     </div>
   </div>
 
-  <script>
-    const chatBox = document.getElementById("chatBox");
+  <div class="input-container">
+    <input type="text" id="user-input" placeholder="Type something..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
-    function appendMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.textContent = text;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+
+    const botReplies = [
+      "That sounds like a lot. Wanna tell me more?",
+      "I'm really proud of you for sharing that. How did it make you feel?",
+      "It’s okay to feel that way. You’re not alone, I promise 💚",
+      "Sometimes talking it out helps. I'm listening.",
+      "You’re doing better than you think. I’m here for you.",
+      "Wanna tell me what happened today? Start anywhere.",
+      "You're strong. Even when it doesn't feel like it.",
+      "Rough day? I’ve got time, talk to me."
+    ];
 
     function sendMessage() {
-      const input = document.getElementById("userInput");
-      const userText = input.value.trim();
-      if (!userText) return;
+      const message = userInput.value.trim();
+      if (message === "") return;
 
-      appendMessage(userText, "user");
+      // Display user's message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.innerText = message;
+      chatBox.appendChild(userMsg);
+      userInput.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-      // Simple bot response
-      let botResponse = "I'm here for you. Tell me more about it.";
-      if (userText.toLowerCase().includes("sad") || userText.toLowerCase().includes("bad")) {
-        botResponse = "I'm sorry you're feeling this way. Want to talk about it?";
-      } else if (userText.toLowerCase().includes("happy")) {
-        botResponse = "That's amazing to hear! 💫 What made you happy today?";
-      }
-
+      // Bot "thinking" delay
       setTimeout(() => {
-        appendMessage(botResponse, "bot");
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        const reply = getBotReply(message);
+        botMsg.innerText = reply;
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
       }, 1000);
-
-      input.value = "";
     }
 
-    // Voice input
-    function startVoice() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert("Sorry, your browser doesn't support voice input.");
-        return;
+    function getBotReply(userMessage) {
+      // Custom keywords can go here
+      if (userMessage.toLowerCase().includes("school")) {
+        return "School can be so overwhelming sometimes. What's been bothering you lately?";
+      }
+      if (userMessage.toLowerCase().includes("parents")) {
+        return "Family stuff can get really heavy. I'm here if you want to share more.";
+      }
+      if (userMessage.toLowerCase().includes("alone")) {
+        return "You’re not alone here. I’ll stay with you through this chat, promise.";
+      }
+      if (userMessage.toLowerCase().includes("happy")) {
+        return "That’s beautiful to hear! What made you feel happy?";
       }
 
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.start();
-
-      recognition.onresult = function(event) {
-        const voiceText = event.results[0][0].transcript;
-        document.getElementById("userInput").value = voiceText;
-        sendMessage();
-      };
+      // Default reply from list
+      return botReplies[Math.floor(Math.random() * botReplies.length)];
     }
   </script>
 </body>

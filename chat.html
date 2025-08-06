@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TeenMind Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #e8f5e9, #ffffff);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #c8e6c9;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      padding: 1rem;
+    }
+
+    .bot-avatar {
+      flex: 0 0 120px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .bot-avatar img {
+      width: 100px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    .chat-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .message {
+      margin: 10px 0;
+      max-width: 70%;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      line-height: 1.4;
+    }
+
+    .bot {
+      background-color: #ffffff;
+      align-self: flex-start;
+      border: 1px solid #a5d6a7;
+    }
+
+    .user {
+      background-color: #c8e6c9;
+      align-self: flex-end;
+      border: 1px solid #81c784;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 1rem;
+      border-top: 1px solid #ccc;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 0.8rem 1rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    .notification {
+      background: #e8f5e9;
+      padding: 1rem;
+      text-align: center;
+      font-style: italic;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <header>TeenMind Chat</header>
+  <div class="notification">
+    Hey, how was your day? You can tell me anything. I'm here to listen 💚
+  </div>
+  <div class="chat-container">
+    <div class="bot-avatar">
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="AI Bot" />
+    </div>
+    <div class="chat-box">
+      <div class="messages" id="chatBox"></div>
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="Type something..." />
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="startVoice()">🎤</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage(userText, "user");
+
+      // Simple bot response
+      let botResponse = "I'm here for you. Tell me more about it.";
+      if (userText.toLowerCase().includes("sad") || userText.toLowerCase().includes("bad")) {
+        botResponse = "I'm sorry you're feeling this way. Want to talk about it?";
+      } else if (userText.toLowerCase().includes("happy")) {
+        botResponse = "That's amazing to hear! 💫 What made you happy today?";
+      }
+
+      setTimeout(() => {
+        appendMessage(botResponse, "bot");
+      }, 1000);
+
+      input.value = "";
+    }
+
+    // Voice input
+    function startVoice() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Sorry, your browser doesn't support voice input.");
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const voiceText = event.results[0][0].transcript;
+        document.getElementById("userInput").value = voiceText;
+        sendMessage();
+      };
+    }
+  </script>
+</body>
+</html>

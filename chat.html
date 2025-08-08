@@ -1,192 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TeenMind - Chat</title>
-  <style>
+import streamlit as st
+import speech_recognition as sr
+import pyttsx3
+import random
+
+# Set up page
+st.set_page_config(page_title="LexiAI", page_icon="📘", layout="centered")
+
+# Custom gradient background using HTML
+st.markdown(
+    '''
+    <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom right, #e8f5e9, #ffffff);
-      color: #2e7d32;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+        background: linear-gradient(to bottom, #d2f8d2, #ffffff);
     }
-
-    .header {
-      padding: 20px;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
+    .stButton>button {
+        background-color: #88d498;
+        color: white;
+        border-radius: 10px;
+        padding: 0.5em 1em;
+        font-weight: bold;
     }
+    </style>
+    ''',
+    unsafe_allow_html=True
+)
 
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: row;
-      overflow: hidden;
-    }
+st.title("📘 LexiAI – Your Reading Companion")
+st.markdown("#### Helping young learners grow with confidence 🌱")
 
-    .bot-avatar {
-      width: 220px;
-      background: #ffffffbb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: float 3s ease-in-out infinite;
-    }
+# Sentence bank by level
+sentences = {
+    "Beginner": ["The sun is bright today.", "The cat is on the mat."],
+    "Intermediate": ["She quickly ran to the store for bread.", "Reading helps us learn new things."],
+    "Advanced": ["The curious child explored the possibilities of science.", "Imagination fuels innovation in education."]
+}
 
-    .bot-avatar img {
-      width: 120px;
-      height: auto;
-    }
+# Difficulty selection
+level = st.selectbox("Choose Reading Level:", ["Beginner", "Intermediate", "Advanced"])
+sentence = random.choice(sentences[level])
 
-    .chat-box {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      overflow-y: auto;
-    }
+st.subheader("📖 Read-Along")
+st.markdown(f"**Try reading aloud:** _\"{sentence}\"_")
 
-    .message {
-      margin: 10px 0;
-      padding: 12px 18px;
-      border-radius: 18px;
-      max-width: 70%;
-    }
+# Text-to-speech
+def speak(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 
-    .bot {
-      background: #d0f0c0;
-      align-self: flex-start;
-    }
+if st.button("🔊 Hear It"):
+    speak(sentence)
 
-    .user {
-      background: #b2dfdb;
-      align-self: flex-end;
-    }
+# Listen and compare
+if st.button("🎤 Start Reading"):
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        st.info("Listening... Speak now!")
+        audio = r.listen(source)
 
-    .input-container {
-      display: flex;
-      padding: 10px;
-      background: #e8f5e9;
-    }
+    try:
+        user_input = r.recognize_google(audio)
+        st.success(f"🗣️ You said: \"{user_input}\"")
 
-    input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 20px;
-      font-size: 1rem;
-      margin-right: 10px;
-    }
+        if user_input.lower().strip() == sentence.lower():
+            st.balloons()
+            speak("Excellent reading! You're amazing.")
+            st.success("✅ Perfect match!")
+        else:
+            speak("Good effort! Try again.")
+            st.warning("❗Almost there. Keep practicing!")
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 20px;
-      background-color: #66bb6a;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    except sr.UnknownValueError:
+        st.error("😬 Sorry, I didn’t catch that.")
+        speak("Sorry, I didn’t catch that. Please try again.")
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+# Comprehension check (Mock)
+st.subheader("🧠 Comprehension Check")
+question = "What is bright today?" if sentence == "The sun is bright today." else "What is on the mat?"
+options = ["The sun", "The moon", "The mat"] if "bright" in sentence else ["The cat", "The dog", "The bag"]
+answer = st.radio("Q: " + question, options)
 
-    .notification {
-      background-color: #fff3cd;
-      color: #856404;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px;
-      font-size: 0.95rem;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">TeenMind 💚</div>
+if st.button("✅ Submit Answer"):
+    correct = "The sun" if "bright" in sentence else "The cat"
+    if answer == correct:
+        st.success("🎉 Correct!")
+        speak("Great job! That’s the right answer.")
+    else:
+        st.error("❌ Try again.")
+        speak("Oops, not quite. Let's try again.")
 
-  <div class="chat-container">
-    <div class="bot-avatar">
-      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="AI Bot" />
-    </div>
+# Word buddy
+st.subheader("💬 Word Buddy")
+word = st.selectbox("Pick a tricky word:", sentence.replace(".", "").split())
+word_meanings = {
+    "bright": "full of light",
+    "sun": "the star at the center of our solar system",
+    "cat": "a small domesticated animal",
+    "mat": "a piece of fabric for the floor"
+}
+meaning = word_meanings.get(word.lower(), "Definition not available.")
+st.info(f"📖 Meaning of \"{word}\": {meaning}")
+if st.button("🔊 Hear Word"):
+    speak(word)
 
-    <div class="chat-box" id="chat-box">
-      <div class="notification">
-        Hey, I’m your AI friend. I’m here if you ever feel like talking 💬 <br>
-        No pressure. Just tell me about your day… or anything at all.
-      </div>
-    </div>
-  </div>
+# Progress tracker (mock stats)
+st.subheader("📊 Progress Tracker")
+st.markdown("**Reading Attempts:** 5  \n**Accuracy:** 80%  \n**Streak:** 🔥 3 Days")
 
-  <div class="input-container">
-    <input type="text" id="user-input" placeholder="Type something..." />
-    <button onclick="sendMessage()">Send</button>
-  </div>
-
-  <script>
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-
-    const botReplies = [
-      "That sounds like a lot. Wanna tell me more?",
-      "I'm really proud of you for sharing that. How did it make you feel?",
-      "It’s okay to feel that way. You’re not alone, I promise 💚",
-      "Sometimes talking it out helps. I'm listening.",
-      "You’re doing better than you think. I’m here for you.",
-      "Wanna tell me what happened today? Start anywhere.",
-      "You're strong. Even when it doesn't feel like it.",
-      "Rough day? I’ve got time, talk to me."
-    ];
-
-    function sendMessage() {
-      const message = userInput.value.trim();
-      if (message === "") return;
-
-      // Display user's message
-      const userMsg = document.createElement('div');
-      userMsg.className = 'message user';
-      userMsg.innerText = message;
-      chatBox.appendChild(userMsg);
-      userInput.value = "";
-      chatBox.scrollTop = chatBox.scrollHeight;
-
-      // Bot "thinking" delay
-      setTimeout(() => {
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        const reply = getBotReply(message);
-        botMsg.innerText = reply;
-        chatBox.appendChild(botMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }, 1000);
-    }
-
-    function getBotReply(userMessage) {
-      // Custom keywords can go here
-      if (userMessage.toLowerCase().includes("school")) {
-        return "School can be so overwhelming sometimes. What's been bothering you lately?";
-      }
-      if (userMessage.toLowerCase().includes("parents")) {
-        return "Family stuff can get really heavy. I'm here if you want to share more.";
-      }
-      if (userMessage.toLowerCase().includes("alone")) {
-        return "You’re not alone here. I’ll stay with you through this chat, promise.";
-      }
-      if (userMessage.toLowerCase().includes("happy")) {
-        return "That’s beautiful to hear! What made you feel happy?";
-      }
-
-      // Default reply from list
-      return botReplies[Math.floor(Math.random() * botReplies.length)];
-    }
-  </script>
-</body>
-</html>
+st.caption("Made with 💚 by BecomingHER | Prototype version")

@@ -1,53 +1,63 @@
 import streamlit as st
-import speech_recognition as sr
-import pyttsx3
 
 st.set_page_config(page_title="LexiAI", layout="centered")
 
 st.markdown("""
     <style>
-        .main {
-            background: linear-gradient(to bottom right, #e8f5e9, #ffffff);
-        }
-        h1, h2, h3 {
-            color: #2e7d32;
-        }
-        .stButton>button {
-            background-color: #2e7d32;
-            color: white;
-        }
+    body {
+        background: linear-gradient(to right, #e0f7fa, #ffffff);
+    }
+    .big-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #2e7d32;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("📖 LexiAI – Your Reading Buddy")
-st.write("A simple AI assistant to help young learners improve their reading and comprehension.")
+st.markdown("<div class='big-title'>👀 Ooooh you liked <b>LexiAI</b>? Say less — we can totally make that your winning pitch.</div>", unsafe_allow_html=True)
 
-st.header("🎤 Read-Along Mode")
-if st.button("Start Listening"):
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        st.info("Speak now...")
-        audio = recognizer.listen(source)
-        try:
-            text = recognizer.recognize_google(audio)
-            st.success(f"You said: {text}")
-        except:
-            st.error("Sorry, I couldn't understand. Try again.")
+st.header("💡 Recap of the LexiAI Concept")
+st.markdown("**LexiAI – A reading and comprehension assistant for students with dyslexia or learning difficulties.**")
 
-st.header("🧠 Comprehension Check")
-question = "What is the main idea of the story you just read?"
-st.write(f"**Q:** {question}")
-answer = st.text_input("Type your answer:")
-if answer:
-    st.success("Awesome! Keep going!")
+st.header("🔥 Why LexiAI is a sleeper hit that could win the ₹15,000:")
+criteria = {
+    "✅ Relevance": "Learning disabilities are common and overlooked. India lacks tools to support these kids.",
+    "✅ Clarity": "Easy to explain: “It helps kids read and understand better using voice + AI.”",
+    "✅ Feasibility": "Use open-source voice recognition, text-to-speech tools, or even mockups.",
+    "✅ Creativity": "Not cliché like “AI therapist.” Rarely anyone presents this in school-level events.",
+    "✅ Impact": "Helps teachers, students, schools. Huge potential in EdTech or CSR.",
+    "✅ Professionalism": "Clean, empathy-driven, and backed with logic — wins hearts and brains."
+}
+for key, value in criteria.items():
+    st.markdown(f"**{key}**: {value}")
 
-st.header("🗣️ Voice Support")
-tts_text = st.text_input("Enter text to read aloud:")
-if st.button("Speak"):
-    engine = pyttsx3.init()
-    engine.say(tts_text)
-    engine.runAndWait()
-    st.success("Text spoken!")
+st.header("🧠 Bonus Strategy")
+st.markdown("""
+Instead of just calling it "for dyslexia," present it like:
 
-st.header("📊 Progress Tracker (Coming Soon)")
-st.info("Track your reading time, mistakes, and improvements here.")
+> “A voice-based AI reading assistant to help **young learners with reading difficulties**, whether it's dyslexia, ADHD, or delayed literacy.”
+
+✅ Broader use-case  
+✅ No scary medical labels  
+✅ Empathetic + inclusive
+""")
+
+st.header("📲 Features of LexiAI")
+features = {
+    "📖 Read-Along Mode": "The child reads aloud. LexiAI listens, offers corrections, praises efforts.",
+    "🧠 Comprehension Check": "After reading, it asks simple Qs to check understanding.",
+    "🗣️ Voice Support": "Uses text-to-speech to read out words, sentences, or even full stories.",
+    "💬 Word Buddy": "Tells meaning and pronunciation of tough words in friendly tone.",
+    "🌈 Custom Difficulty": "You can choose reading level based on age or fluency.",
+    "📊 Progress Tracker": "Tracks reading time, errors, improvements (for teachers/parents)."
+}
+for key, value in features.items():
+    st.markdown(f"**{key}**: {value}")
+
+st.header("🎯 You can:")
+st.markdown("""
+- Show a **mock interface**  
+- Add a **case study story**  
+- End with: “We believe LexiAI can turn struggling readers into confident learners.”
+""")
